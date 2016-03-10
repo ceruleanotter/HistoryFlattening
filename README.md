@@ -7,3 +7,5 @@ I forgot more stuff!
 Alright, last thing I forgot
 
 Exercise 1
+
+Solution 1
