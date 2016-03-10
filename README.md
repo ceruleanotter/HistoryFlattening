@@ -9,3 +9,5 @@ Alright, last thing I forgot
 Exercise 1
 
 Solution 1
+
+Exercise 2
