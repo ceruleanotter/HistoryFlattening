@@ -17,14 +17,16 @@ repo = Repo(repo_dir)
 
 origin = repo.remote(ORIGIN)
 
-repo.git.push(origin, DEVELOP_BRANCH)
+
 
 # Delete all remote branches except master and develop
 for branch in repo.git.branch("-r").split("\n"):
     name = branch.split("/")[-1]
-    if name != MASTER_BRANCH and name != DEVELOP_BRANCH:
+    if name != MASTER_BRANCH:
         print "Removing remote branch:", name
         repo.git.push(ORIGIN, ":" + name)
+
+repo.git.push(origin, DEVELOP_BRANCH)
 
 for branch in repo.branches:
     if branch.name != MASTER_BRANCH and branch.name != DEVELOP_BRANCH:
