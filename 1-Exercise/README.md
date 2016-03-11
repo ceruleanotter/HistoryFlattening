@@ -1,3 +1,0 @@
-# HistoryFlattening
-
-Exercise 1
