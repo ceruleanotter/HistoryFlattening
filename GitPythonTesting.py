@@ -20,12 +20,14 @@ origin = repo.remote(ORIGIN)
 
 # print repo.git.branch("-r")
 
-for branch in repo.git.branch("-r").split("\n"):
-    name = branch.split("/")[-1]
-    print name
-    if name != MASTER_BRANCH and name != DEVELOP_BRANCH:
-        repo.git.push(ORIGIN, ":" + name)
+# for branch in repo.git.branch("-r").split("\n"):
+#     name = branch.split("/")[-1]
+#     print name
+#     if name != MASTER_BRANCH and name != DEVELOP_BRANCH:
+#         repo.git.push(ORIGIN, ":" + name)
 
+
+repo.git.push(origin, DEVELOP_BRANCH)
 
 # repo.git.branch("-r")
 

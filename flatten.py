@@ -17,9 +17,9 @@ repo = Repo(repo_dir)
 
 origin = repo.remote(ORIGIN)
 
+repo.git.push(origin, DEVELOP_BRANCH)
+
 # Delete all remote branches except master and develop
-
-
 for branch in repo.git.branch("-r").split("\n"):
     name = branch.split("/")[-1]
     if name != MASTER_BRANCH and name != DEVELOP_BRANCH:
@@ -31,12 +31,11 @@ for branch in repo.branches:
         repo.git.branch(branch.name, "-D")
 
 # Stash any changes (like to the flattening script)
-
+print "Stashing"
 repo.git.stash()
 repo.git.checkout(DEVELOP_BRANCH)
 
 # Get all parent commits of the tip of develop
-start, max_count = 0, 100
 revs = repo.git.rev_list(DEVELOP_BRANCH).split("\n")
 for rev in revs:
 
@@ -60,7 +59,7 @@ for rev in revs:
     shutil.copytree(repo_dir, target_dir, ignore=shutil.ignore_patterns(*IGNORE_PATTERNS))
 
 
-print "in the finally block, checking out master"
+print "Checking out master and copying in the snapshots"
 repo.git.checkout(MASTER_BRANCH)
 
 # Copy all repo snapshots back to master
@@ -75,11 +74,6 @@ for branch in repo.branches:
 # Clean up our temp directory
 if os.path.exists(temp_dir):
     shutil.rmtree(temp_dir)
-
-
-
-
-
 
 # Res
 print "Popping"
