@@ -65,6 +65,7 @@ if os.path.exists(temp_dir):
     shutil.rmtree(temp_dir)
 
 
+
 repo.git.add(u=True)
 repo.index.commit("Flatten history")
 
