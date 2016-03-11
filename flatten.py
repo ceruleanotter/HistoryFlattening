@@ -21,8 +21,8 @@ origin = repo.remote(ORIGIN)
 
 for branch in repo.git.branch("-r").split("\n"):
     name = branch.split("/")[-1]
-    print name
     if name != MASTER_BRANCH and name != DEVELOP_BRANCH:
+        print "Removing remote branch:", name
         repo.git.push(ORIGIN, ":" + name)
 
 # Stash any changes (like to the flattening script)
@@ -34,8 +34,10 @@ try:
     start, max_count = 0, 100
     revs = repo.git.rev_list(DEVELOP_BRANCH).split("\n")
     for rev in revs:
+
         commit = repo.commit(rev)
         message = commit.message.strip()
+        print "Creating a branch for:", message
 
         # Create a new branch with the same name as the commit
         new_branch = repo.create_head(message)
@@ -45,6 +47,7 @@ try:
         new_branch.checkout()
         repo.git.clean("-fd")
 
+        print "Pushing:", message
         origin.push(new_branch)
 
         # Copy the state of the repository to temp dir
@@ -52,7 +55,7 @@ try:
         shutil.copytree(repo_dir, target_dir, ignore=shutil.ignore_patterns(*IGNORE_PATTERNS))
 
 finally:
-    print "in the finally block"
+    print "in the finally block, checking out master"
     repo.git.checkout(MASTER_BRANCH)
 
     # Copy all repo snapshots back to master
@@ -74,5 +77,6 @@ finally:
 
 
 # Res
+    print "Popping"
     repo.git.stash("pop")
 
