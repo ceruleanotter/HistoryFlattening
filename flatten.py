@@ -17,13 +17,18 @@ repo = Repo(repo_dir)
 
 origin = repo.remote(ORIGIN)
 
-# Delete all branches except master and develop
+# Delete all remote branches except master and develop
+
 
 for branch in repo.git.branch("-r").split("\n"):
     name = branch.split("/")[-1]
     if name != MASTER_BRANCH and name != DEVELOP_BRANCH:
         print "Removing remote branch:", name
         repo.git.push(ORIGIN, ":" + name)
+
+for branch in repo.branches:
+    if branch.name != MASTER_BRANCH and branch.name != DEVELOP_BRANCH:
+        repo.git.branch(branch.name, "-D")
 
 # Stash any changes (like to the flattening script)
 try:
