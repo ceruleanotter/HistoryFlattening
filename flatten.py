@@ -77,5 +77,6 @@ if os.path.exists(temp_dir):
 
 # Res
 print "Popping"
-repo.git.stash("pop")
+if repo.git.stash("list"):
+    repo.git.stash("pop")
 

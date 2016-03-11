@@ -15,6 +15,13 @@ temp_dir = tempfile.mkdtemp()
 repo_dir = os.getcwd()
 repo = Repo(repo_dir)
 
+repo.git.stash()
+
+print repo.git.stash("list")
+
+if repo.git.stash("list"):
+    repo.git.stash("pop")
+
 origin = repo.remote(ORIGIN)
 # print origin.git.branches
 
@@ -27,7 +34,7 @@ origin = repo.remote(ORIGIN)
 #         repo.git.push(ORIGIN, ":" + name)
 
 
-repo.git.push(origin, DEVELOP_BRANCH)
+# repo.git.push(origin, DEVELOP_BRANCH)
 
 # repo.git.branch("-r")
 
