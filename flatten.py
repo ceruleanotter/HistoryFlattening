@@ -24,7 +24,7 @@ repo.git.checkout(DEVELOP_BRANCH)
 # Delete all branches except master and develop
 for branch in repo.branches:
     if branch.name != MASTER_BRANCH and branch.name != DEVELOP_BRANCH:
-        repo.delete_head(branch)
+        repo.git.branch(branch.name, "-D")
 
 
 # Get all parent commits of the tip of develop
