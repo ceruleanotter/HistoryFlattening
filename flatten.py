@@ -22,7 +22,8 @@ origin = repo.remote(ORIGIN)
 # Delete all remote branches except master and develop
 for branch in repo.git.branch("-r").split("\n"):
     name = branch.split("/")[-1]
-    if name != MASTER_BRANCH:
+    remote = branch.split("/")[-2]
+    if name != MASTER_BRANCH and remote == ORIGIN:
         print "Removing remote branch:", name
         repo.git.push(ORIGIN, ":" + name)
 
@@ -42,12 +43,17 @@ revs = repo.git.rev_list(DEVELOP_BRANCH).split("\n")
 for rev in revs:
 
     commit = repo.commit(rev)
-    message = commit.message.strip()
+
+
+    message = commit.message.split("\n")[0].strip().replace(" ","").replace(".","").replace(":","")
+
+    message = message[:75] if len(message) > 75 else message
+
     print "Creating a branch for:", message
 
     # Create a new branch with the same name as the commit
     new_branch = repo.create_head(message)
-    new_branch.set_commit(commit)
+    new_branch.set_commit(rev)
 
     # Checkout and clean that branch
     new_branch.checkout()
