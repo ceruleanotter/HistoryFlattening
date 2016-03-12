@@ -21,8 +21,9 @@ origin = repo.remote(ORIGIN)
 
 # Delete all remote branches except master and develop
 for branch in repo.git.branch("-r").split("\n"):
-    name = branch.split("/")[-1]
-    remote = branch.split("/")[-2]
+    name = branch.split("/")[-1].strip()
+    remote = branch.split("/")[0].strip()
+    print branch, name, remote
     if name != MASTER_BRANCH and remote == ORIGIN:
         print "Removing remote branch:", name
         repo.git.push(ORIGIN, ":" + name)
