@@ -91,11 +91,12 @@ class Flattener:
             if branch.name != self.student and branch.name != self.develop:
                 branch.checkout()
                 print "Saving snapshot of:", branch.name
-                self.repo.git.clean("-fd")
+                self.repo.git.clean("-fdx")
                 target_dir = os.path.join(temp_dir,branch.name)
                 shutil.copytree(self.repo_dir, target_dir, ignore=shutil.ignore_patterns(*IGNORE_PATTERNS))
 
     def copy_snapshots_to_student_branch(self, temp_dir):
+        self.repo.git.checkout(STUDENT_BRANCH)
         for branch in self.repo.branches:
             if branch.name != self.student and branch.name != self.develop:
                 source_dir = os.path.join(temp_dir,branch.name)
