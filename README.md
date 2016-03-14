@@ -1,24 +1,28 @@
 # History Flattening
 
-
-
 Online courses often involve students following along in the step-by-step development process of an app. It is often useful to supply students with a zip containing many folders with snapshots of the app at different points in time. It is even more useful to supply pairs of folders, one for the starting point of an exercise, and one for the solution to the exercise.
 
-The difficulty arises in maintaining consistency across those folders when a change must be made to the app. This script and associated workflow allows an instructor to make updates to their app, and automatically generate
+The difficulty arises in maintaining consistency across those folders when a change must be made to the app. This script and associated workflow allows an instructor to make updates to their app and automatically generate consistent snapshot folders.
 
 ## Usage
 
-First, create a `develop` branch containing one commit for each snapshot you want students to see. This can be constructed with the help of:
+First, we need two branches, henceforth referred to as `student` and `develop`. The `develop` branch should contain one commit for each snapshot you want students to see. This can be constructed with the help of:
 
     git rebase -i -root
 
-Note that since the commit names will be transformed into both branch names and folder names, you must be sure to name your commits in a way that will safely translate. To be safest, use only alphanumeric characters and dashes. The script will try to
+Note that since the commit names will be transformed into both branch names and folder names, you must be sure to name your commits in a way that will safely translate. The script will remove all character that are not alphanumeric, periods, and dashes. It will also truncate names to 100 characters.
 
-When you've created this clean history, checkout master, and run flatten.py from the root. It will first delete all the branches except `master` from `origin` (probably you GitHub repo). Next, it will check out each parent commit of `develop` in turn, clean the working tree, and save the contents of that tree to a temporary directory with the same name as the commit message.
+Next, you'll need a new `student` branch that is an orphan, that is, it has no history. This can be created using
 
-It will also create a new branch at that commit, also with the same name as the commit message, and push that branch to origin.
+    git checkout --orphan student
 
-Finally, it will checkout master, and copy in all those temporary directories. Reviewing and committing the changes to master is left up to the user.
+You can now run `flatten.py`. If you run it from your repository root directory and use the `student`, `develop`, and have a remote named `origin`, you don't need any command line arguments.
+
+It will first delete all local branches except `student` and `develop`. It will then create a branch for each parent commit of `develop` (using a cleaned version of the commit message as a branch name). Next, it will checkout and clean each branch it just created, and copy the working tree to a temporary directory (in a subdirectory with the same name as the branch).
+
+It will then check out `student`, and copy the temporary directory to the working tree. Finally, it will push to `origin`.
+
+Reviewing and committing the changes to `student` is left up to the user.
 
 ## Making Changes
 
