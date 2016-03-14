@@ -11,7 +11,7 @@ IGNORE_PATTERNS = ('.git',".DS_Store")
 SAFE_CHARS = ["-", "_", "."]
 MAX_LENGTH = 100
 
-STUDENT_BRANCH = "master"
+STUDENT_BRANCH = "student"
 DEVELOP_BRANCH = "develop"
 ORIGIN = "origin"
 
