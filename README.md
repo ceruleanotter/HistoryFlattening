@@ -8,9 +8,11 @@ The difficulty arises in maintaining consistency across those folders when a cha
 
 ## Usage
 
-First, create a develop branch containing one commit for each snapshot you want students to see. This can be constructed with the help of:
+First, create a `develop` branch containing one commit for each snapshot you want students to see. This can be constructed with the help of:
 
     git rebase -i -root
+
+Note that since the commit names will be transformed into both branch names and folder names, you must be sure to name your commits in a way that will safely translate. To be safest, use only alphanumeric characters and dashes. The script will try to
 
 When you've created this clean history, checkout master, and run flatten.py from the root. It will first delete all the branches except `master` from `origin` (probably you GitHub repo). Next, it will check out each parent commit of `develop` in turn, clean the working tree, and save the contents of that tree to a temporary directory with the same name as the commit message.
 

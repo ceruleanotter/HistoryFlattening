@@ -5,6 +5,9 @@ import shutil
 import tempfile
 
 IGNORE_PATTERNS = ('.git',"LICENSE")
+SAFE_CHARS = ["-", "_", "."]
+BRANCH_NAME_MAX_LENGTH = 100
+
 MASTER_BRANCH = "master"
 DEVELOP_BRANCH = "develop"
 ORIGIN = "origin"
@@ -45,22 +48,22 @@ for rev in revs:
 
     commit = repo.commit(rev)
 
+    message = commit.message.split("\n")[0]
 
-    message = commit.message.split("\n")[0].strip().replace(" ","").replace(".","").replace(":","")
+    safe_message = "".join(c for c in message if c.isalnum() or c in SAFE_CHARS).strip()
+    branch_name = safe_message[:BRANCH_NAME_MAX_LENGTH] if len(safe_message) > BRANCH_NAME_MAX_LENGTH else safe_message
 
-    message = message[:75] if len(message) > 75 else message
-
-    print "Creating a branch for:", message
+    print "Creating a branch for:", branch_name
 
     # Create a new branch with the same name as the commit
-    new_branch = repo.create_head(message)
+    new_branch = repo.create_head(branch_name)
     new_branch.set_commit(rev)
 
     # Checkout and clean that branch
     new_branch.checkout()
     repo.git.clean("-fd")
 
-    print "Pushing:", message
+    print "Pushing:", branch_name
     origin.push(new_branch)
 
     # Copy the state of the repository to temp dir
@@ -88,4 +91,6 @@ if os.path.exists(temp_dir):
 print "Popping"
 if repo.git.stash("list"):
     repo.git.stash("pop")
+
+
 
