@@ -20,9 +20,11 @@ You can now run `flatten.py`. If you run it from your repository root directory 
 
 It will first delete all local branches except `student` and `develop`. It will then create a branch for each parent commit of `develop` (using a cleaned version of the commit message as a branch name). Next, it will checkout and clean each branch it just created, and copy the working tree to a temporary directory (in a subdirectory with the same name as the branch).
 
-It will then check out `student`, and copy the temporary directory to the working tree. Finally, it will push to `origin`.
+It will then check out `student`, and copy the temporary directory to the working tree.
 
-Reviewing and committing the changes to `student` is left up to the user.
+Reviewing and committing the changes to `student` is left up to the user. As is pushing the generated branches. This can be done using
+
+    git push origin --all --prune
 
 ## Making Changes
 
