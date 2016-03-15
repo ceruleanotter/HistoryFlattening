@@ -58,10 +58,11 @@ class Flattener:
             if self.repo.git.stash("list"):
                 self.repo.git.stash("pop")
 
-        print "Pushing changes"
-        self.remote.push(all=True, prune = True)
+        # print "Pushing changes"
+        # self.remote.push(all=True, prune = True)
 
-        print "Done! Review and commit/push the", self.student, "branch at your leisure."
+        print "Done! Review and commit the", self.student, "branch at your leisure."
+        print "Then run $ git push {} --all --prune".format(self.remote.name)
 
 
 

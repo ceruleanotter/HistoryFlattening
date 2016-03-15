@@ -16,7 +16,7 @@ Next, you'll need a new `student` branch that is an orphan, that is, it has no h
 
     git checkout --orphan student
 
-You can now run `flatten.py`. If you run it from your repository root directory and use the `student`, `develop`, and have a remote named `origin`, you don't need any command line arguments.
+You can now run `flatten.py`. If you run it from your repository root directory and use the branch names `student` and `develop`, and have a remote named `origin`, you don't need any command line arguments.
 
 It will first delete all local branches except `student` and `develop`. It will then create a branch for each parent commit of `develop` (using a cleaned version of the commit message as a branch name). Next, it will checkout and clean each branch it just created, and copy the working tree to a temporary directory (in a subdirectory with the same name as the branch).
 
