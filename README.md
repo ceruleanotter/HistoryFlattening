@@ -30,11 +30,11 @@ Reviewing and committing the changes to `student` is left up to the user. As is 
 
 So let's say that you've created your whole app with its beautiful clean history, and now you discover a mistake that you made waaaaaay back at the start. If you wanted to fix it in every folder, you'd have a horrible copy paste job on your hands. Unless, of course, you use this script.
 
-So first thing, make the change and clean up the history again. You can do this using an interactive rebase. First you need to check out the develop branch and run
+So first thing, make the change and clean up the history again. You can do this using an interactive rebase. First you need to check out the `develop` branch and run
 
     git rebase -i -root
 
-That will take you to a file containing a list of every parent commit of the develop branch, going back to the start of time. You can mark any commit that needs changing by replacing `pick` with `edit`. Then save and close the file.
+That will take you to a file containing a list of every parent commit of the `develop` branch, going back to the start of time. You can mark any commit that needs changing by replacing `pick` with `edit`. Then save and close the file.
 
 You will then be taken back in time to right after the first commit you marked `edit`. Make any changes you need, then run
 
@@ -45,4 +45,4 @@ This will take you to the normal commit file. It's important that you keep the s
 
     git rebase --continue
 
-This will take you to the next commit you marked `edit`, or, if there are no more left, will dump you back at `develop`. Now your history is clean again, and you can checkout master, and re-run the script.
+This will take you to the next commit you marked `edit`, or, if there are no more left, will dump you back at `develop`. Now your history is clean again, and you can checkout `student`, and re-run the script.
