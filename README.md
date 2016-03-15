@@ -4,6 +4,10 @@ Online courses often involve students following along in the step-by-step develo
 
 The difficulty arises in maintaining consistency across those folders when a change must be made to the app. This script and associated workflow allows an instructor to make updates to their app and automatically generate consistent snapshot folders.
 
+You'll need [GitPython](https://github.com/gitpython-developers/GitPython) to run:
+
+    pip install gitpython
+
 ## Usage
 
 First, we need two branches, henceforth referred to as `student` and `develop`. The `develop` branch should contain one commit for each snapshot you want students to see. This can be constructed with the help of:
