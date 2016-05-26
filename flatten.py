@@ -14,7 +14,7 @@ SAFE_CHARS = ["-", "_", "."]
 MAX_LENGTH = 100
 
 STUDENT="student"
-DEVELOP="develop"
+DEVELOP="develop-"
 DEVELOP_DEFAULT = "all develop branches"
 
 
@@ -32,6 +32,7 @@ def flatten(repo_dir, student, develop_branches, remove_branches):
 
     flat = len(develop_branches) == 1
 
+    # print develop_branches
 
     try:
         temp_dir = tempfile.mkdtemp()
@@ -42,7 +43,7 @@ def flatten(repo_dir, student, develop_branches, remove_branches):
 
             for develop in develop_branches:
                 to_temp_dir(repo, repo_dir, develop, temp_dir, flat)
-            insert_diff_links(temp_dir)
+            # insert_diff_links(temp_dir)
             snapshots_to_student_branch(repo, student, temp_dir, repo_dir)
         finally:
             repo.git.checkout(current_branch)
@@ -80,10 +81,15 @@ def to_temp_dir(repo, repo_dir, develop, temp_dir, flat):
             if flat:
                 target_dir = os.path.join(temp_dir, branch_name)
             else:
-                target_dir = os.path.join(temp_dir, develop.name, branch_name)
+                _, folder_name = develop.name.split("-")
+                target_dir = os.path.join(temp_dir, folder_name, branch_name)
 
             shutil.copytree(repo_dir, target_dir,
                             ignore=shutil.ignore_patterns(*IGNORE_PATTERNS))
+            with open(os.path.join(target_dir, "README.md"), "a") as readme:
+                print branch_name
+                number, _, name = branch_name.split("-")
+                readme.write(DIFF_FORMAT.format(number=number, name=name))
 
 
 def clean_commit_message(message):
