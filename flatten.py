@@ -114,14 +114,17 @@ def insert_diff_links(temp_dir):
 
 
 def copy_snapshots(repo, student, temp_dir, target_dir):
+    targetRepo = repo
     if target_dir == os.getcwd():
         repo.git.checkout(student)
     else:
         targetRepo = git.Repo(target_dir)
+        targetRepo.git.stash()
         try:
             targetRepo.git.checkout('--orphan', student)
         except git.GitCommandError:
             targetRepo.git.checkout(student)
+
     for item in os.listdir(temp_dir):
         source_dir = os.path.join(temp_dir, item)
         dest_dir = os.path.join(target_dir, item)
@@ -130,7 +133,9 @@ def copy_snapshots(repo, student, temp_dir, target_dir):
             shutil.rmtree(dest_dir)
         print "Copying: ", item
         shutil.copytree(source_dir, dest_dir)
-
+    if target_dir != os.getcwd():
+        if targetRepo.git.stash("list"):
+            targetRepo.git.stash("pop")
 
 DESCRIPTION = "This script "
 
