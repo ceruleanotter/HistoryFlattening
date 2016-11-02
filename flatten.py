@@ -1,28 +1,32 @@
 #! /usr/local/bin/python
 
-from git import Repo
+import argparse
 import os
-import io
 import shutil
 import sys
-import getopt
 import tempfile
-import argparse
+import git
 
 IGNORE_PATTERNS = ('.git', ".DS_Store")
 SAFE_CHARS = ["-", "_", "."]
 MAX_LENGTH = 100
 
-STUDENT="student"
-DEVELOP="develop-"
+STUDENT = "student"
+DEVELOP = "develop-"
 DEVELOP_DEFAULT = "all develop branches"
 
+DIFF_FORMAT = """
+
+You can download a zip of this exercise [here](https://github.com/udacity/ud843-QuakeReport/archive/{number}-Exercise-{name}.zip), \
+and a zip of the solution [here](https://github.com/udacity/ud843-QuakeReport/archive/{number}-Solution-{name}.zip). \
+Also, you can find a visual summary of the solution [here](https://github.com/udacity/ud843-QuakeReport/compare/\
+{number}-Exercise-{name}...{number}-Solution-{name}).
+
+"""
 
 
-def flatten(repo_dir, student, develop_branches, remove_branches):
-
-    repo = Repo(repo_dir)
-
+def flatten(repo_dir, target_dir, student, develop_branches, remove_branches, links):
+    repo = git.Repo(repo_dir)
 
     if develop_branches == DEVELOP_DEFAULT:
         develop_branches = [branch for branch in repo.branches if DEVELOP in branch.name]
@@ -43,10 +47,13 @@ def flatten(repo_dir, student, develop_branches, remove_branches):
 
             for develop in develop_branches:
                 to_temp_dir(repo, repo_dir, develop, temp_dir, flat)
-            # insert_diff_links(temp_dir)
-            snapshots_to_student_branch(repo, student, temp_dir, repo_dir)
+            if links:
+                insert_diff_links(temp_dir)
+
+            copy_snapshots(repo, student, temp_dir, target_dir)
         finally:
-            repo.git.checkout(current_branch)
+            if current_branch:
+                repo.git.checkout(current_branch)
             print "Popping"
             if repo.git.stash("list"):
                 repo.git.stash("pop")
@@ -95,19 +102,8 @@ def to_temp_dir(repo, repo_dir, develop, temp_dir, flat):
 def clean_commit_message(message):
     first_line = message.split("\n")[0]
     safe_message = "".join(
-        c for c in message if c.isalnum() or c in SAFE_CHARS).strip()
-    return (safe_message[:MAX_LENGTH]
-            if len(safe_message) >
-            MAX_LENGTH else safe_message)
-
-
-DIFF_FORMAT = """
-
-You can download a zip of this exercise [here](https://github.com/udacity/ud843-QuakeReport/archive/{number}-Exercise-{name}.zip), \
-and a zip of the solution [here](https://github.com/udacity/ud843-QuakeReport/archive/{number}-Solution-{name}.zip). \
-Also, you can find a visual summary of the solution [here](https://github.com/udacity/ud843-QuakeReport/compare/{number}-Exercise-{name}...{number}-Solution-{name}).
-
-"""
+        c for c in first_line if c.isalnum() or c in SAFE_CHARS).strip()
+    return safe_message[:MAX_LENGTH] if len(safe_message) > MAX_LENGTH else safe_message
 
 
 def insert_diff_links(temp_dir):
@@ -117,11 +113,12 @@ def insert_diff_links(temp_dir):
             readme.write(DIFF_FORMAT.format(number=number, name=name))
 
 
-def snapshots_to_student_branch(repo, student, temp_dir, repo_dir):
-    repo.git.checkout(student)
+def copy_snapshots(repo, student, temp_dir, target_dir):
+    if target_dir == os.getcwd():
+        repo.git.checkout(student)
     for item in os.listdir(temp_dir):
         source_dir = os.path.join(temp_dir, item)
-        target_dir = os.path.join(repo_dir, item)
+        target_dir = os.path.join(target_dir, item)
 
         if os.path.exists(target_dir):
             shutil.rmtree(target_dir)
@@ -146,24 +143,36 @@ def main():
 
     parser.add_argument('-d', '--directory',
                         default=os.getcwd(),
-                        help="the directory of the repository")
+                        help="the directory of the source repository")
 
-    parser.add_argument('-s', '--student', default=STUDENT,
+    parser.add_argument('-t', '--target',
+                        default=os.getcwd(),
+                        help="target directory")
+
+    parser.add_argument('-s', '--student',
+                        default=STUDENT,
                         help="branch where snapshots will be copied")
+
+    parser.add_argument('-l', '--links',
+                        action='store_true',
+                        help="Add links to branches and diff to README files")
 
     parser.add_argument('develop_branches',
                         nargs="*",
                         default=DEVELOP_DEFAULT,
-                        help = "the branches where snapshots will be copied from")
+                        help="the branches where snapshots will be copied from")
 
     parsed = parser.parse_args()
 
     flatten(
         parsed.directory,
+        parsed.target,
         parsed.student,
         parsed.develop_branches,
-        parsed.remove
+        parsed.remove,
+        parsed.links
     )
+
 
 if __name__ == "__main__":
     sys.exit(main())
