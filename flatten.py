@@ -118,12 +118,12 @@ def copy_snapshots(repo, student, temp_dir, target_dir):
         repo.git.checkout(student)
     for item in os.listdir(temp_dir):
         source_dir = os.path.join(temp_dir, item)
-        target_dir = os.path.join(target_dir, item)
+        dest_dir = os.path.join(target_dir, item)
 
-        if os.path.exists(target_dir):
-            shutil.rmtree(target_dir)
+        if os.path.exists(dest_dir):
+            shutil.rmtree(dest_dir)
         print "Copying: ", item
-        shutil.copytree(source_dir, target_dir)
+        shutil.copytree(source_dir, dest_dir)
 
 
 DESCRIPTION = "This script "
