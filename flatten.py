@@ -116,6 +116,12 @@ def insert_diff_links(temp_dir):
 def copy_snapshots(repo, student, temp_dir, target_dir):
     if target_dir == os.getcwd():
         repo.git.checkout(student)
+    else:
+        targetRepo = git.Repo(target_dir)
+        try:
+            targetRepo.git.checkout('--orphan', student)
+        except git.GitCommandError:
+            targetRepo.git.checkout(student)
     for item in os.listdir(temp_dir):
         source_dir = os.path.join(temp_dir, item)
         dest_dir = os.path.join(target_dir, item)
